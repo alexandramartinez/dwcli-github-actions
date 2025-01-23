@@ -24,7 +24,7 @@ jobs:
         run: dw help
       - name: Run DW script
         run: |
-          dw run -f $(ls files-to-run/script) -i payload=$(ls files-to-run/input) > output
+          dw run -f files-to-run/script/$(ls files-to-run/script) -i payload=files-to-run/input/$(ls files-to-run/input) > output
       - name: Upload result file
         uses: actions/upload-artifact@v4
         with:
