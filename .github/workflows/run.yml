@@ -23,4 +23,4 @@ jobs:
       - name: Test DW CLI
         run: dw help
       - name: Run DW script
-        run: dw run -f transform.dwl -i payload.txt
+        run: dw run -f transform.dwl -i payload=payload.txt
