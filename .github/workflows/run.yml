@@ -23,4 +23,9 @@ jobs:
       - name: Test DW CLI
         run: dw help
       - name: Run DW script
-        run: dw run -f transform.dwl -i payload=payload.txt
+        run: dw run -f transform.dwl -i payload=payload.txt > output.json
+      - name: Upload result file
+        uses: actions/upload-artifact@v4
+        with:
+          name: output.json
+          path: output.json

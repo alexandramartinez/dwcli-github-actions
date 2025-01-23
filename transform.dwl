@@ -1,5 +1,5 @@
 import some from dw::core::Arrays
-// output application/json
+output application/json
 var lines = payload splitBy "\n"
 var sizeOfLine = sizeOf(lines[0])
 fun getChar(x:Number,y:Number):String = if ((x<0) or (y<0)) "" else (lines[y][x] default "")
