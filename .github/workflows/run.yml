@@ -21,9 +21,9 @@ jobs:
         with:
           distribution: "zulu"
           java-version: 11
+      - run: eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
       - name: Install DW CLI
         run: |
-          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           brew tap mulesoft-labs/data-weave
           brew install dw
       - name: Test
