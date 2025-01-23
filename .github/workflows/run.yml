@@ -3,6 +3,7 @@ name: Run the DW CLI
 on:
   push:
     branches: [ main ]
+  workflow_call:
 
 jobs:
   run:
@@ -10,12 +11,6 @@ jobs:
     steps:
       - name: Checkout this repo
         uses: actions/checkout@v4
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-maven-
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -25,5 +20,7 @@ jobs:
         run: |
           brew tap mulesoft-labs/data-weave
           brew install dw
-      - name: Test
+      - name: Test DW CLI
         run: dw help
+      - name: Run DW script
+        run: dw run -f transform.dwl -i payload.txt
