@@ -24,4 +24,5 @@ It's an easy/basic tool. I just wanted to be able to close my computer and leave
 ## Limitations
 
 - Only one file can and must be located under the `input` and `script` folders at all times.
-- Does not support custom modules or multiple inputs unless you modify the command inside `.github/workflows`
+- Does not support custom modules or multiple inputs unless you modify the command inside `.github/workflows`.
+- GitHub Actions has a limit of 360 minutes (6 hours) for the maximum allowed running time.
