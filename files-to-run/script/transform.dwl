@@ -1,42 +1,24 @@
-import firstWith from dw::core::Arrays
-import lines from dw::core::Strings
+import countBy from dw::core::Arrays
+import lines, substringAfter from dw::core::Strings
 output application/json
-var connections = lines(payload) map ($ splitBy "-") reduce ((item, a={}) -> 
-    a update {
-        case x at ."$(item[0])"! -> (a[item[0]] default []) + item[1]
-        case y at ."$(item[1])"! -> (a[item[1]] default []) + item[0]
-    }
-)
-fun keepChecking(computers, prevComputers=[], sizeOfPrevComputers=0) = do {
-    computers map ((computer1) -> (
-        if (isEmpty(prevComputers))
-            keepChecking(connections[computer1],[computer1],1)
-        else if (sizeOfPrevComputers == 1)
-            (keepChecking(connections[computer1] - prevComputers[0], prevComputers + computer1, 2)) 
-        else do {
-            @Lazy
-            var filtered = (connections[computer1] - prevComputers[-1]) 
-                filter ((computer2) -> prevComputers contains computer2)
-            @Lazy
-            var sizeMatches = sizeOfPrevComputers-1 == sizeOf(filtered)
-            ---
-            if (sizeMatches)
-                (filtered map ((computer2) ->
-                    (keepChecking(connections[computer1] -- prevComputers, prevComputers + computer1, sizeOfPrevComputers+1))
-                ))
-            else if (sizeOfPrevComputers <= 2) []
-            else {
-                pc: prevComputers,
-                size: sizeOfPrevComputers
-            }
-        }
-    ))
-}
+var split = payload splitBy "\n\n"
+var patternsList = (split[0] splitBy ", ") 
 fun flattenNestedArrays(data) = data match {
     case is Array -> flatten(data map flattenNestedArrays($))
     else -> data
 }
-var finalList = flattenNestedArrays(keepChecking(namesOf(connections))) 
-var maxsize = max(finalList.size)
+fun checkDesign(initialDesign,design,patterns,str="") = do {
+    var startsWithPatterns = patterns filter (design startsWith $)
+    ---
+    if (isEmpty(startsWithPatterns)) if (str == initialDesign) [1] else [0]
+    else flatten(startsWithPatterns map ((pattern) -> 
+        checkDesign(initialDesign, design substringAfter pattern, patterns, str ++ pattern)
+    )) 
+}
 ---
-(finalList firstWith ($.size == maxsize)).pc orderBy $ joinBy ","
+(lines(split[1]) map ((design) -> do { // brwrr
+    var availablePatterns = patternsList filter (design contains $) // [r, wr, b, br]
+    ---
+    // flattenNestedArrays(checkDesign(design,design,availablePatterns)) countBy ($)
+    (checkDesign(design,design,availablePatterns)) then sum($)
+})) then sum($)
