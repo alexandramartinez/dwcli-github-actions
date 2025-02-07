@@ -1,5 +1,5 @@
 output application/json
-import every from dw::core::Arrays
+import countBy from dw::core::Arrays
 var lines = payload splitBy "\n"
 var WIDTH = 101
 var HEIGHT = 103
@@ -36,13 +36,13 @@ fun getNewCoords(from:Coords, direction:Direction):Coords = direction match {
     case "up" -> {x: from.x, y: from.y-1}
     case "down" -> {x: from.x, y: from.y+1}
 }
-fun areAllTouchingOthers(arr):Boolean = do {
-    (arr map ((item) -> 
+fun areMostTouchingOthers(arr):Boolean = do {
+    ((arr map ((item) -> 
         (arr contains getNewCoords(item,"left"))
         or (arr contains getNewCoords(item,"right"))
         or (arr contains getNewCoords(item,"up"))
         or (arr contains getNewCoords(item,"down"))
-    )) every $
+    )) countBy $) >= 350 // 70% of 500
 }
 var robots:Array<Robot> = lines map ((robot) -> do {
     var split = robot splitBy " "
@@ -56,7 +56,7 @@ var robots:Array<Robot> = lines map ((robot) -> do {
 })
 @TailRec()
 fun keepMovingRobots(robots,counter=0) = do {
-    if (areAllTouchingOthers(robots.position)) counter
+    if (areMostTouchingOthers(robots.position)) counter
     else keepMovingRobots(
         robots map ((robot, index) -> 
             {
